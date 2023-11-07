@@ -241,6 +241,9 @@ class Login : AppCompatActivity() {
 
                         binding.progressBar.visibility = View.VISIBLE
                         ingresoConHuella = true
+                        if(usuarioSp!=null && contraseniaSp !=null)
+                            autenticaUsuario(usuarioSp!!, contraseniaSp!!)
+
                     }
 
                     override fun onAuthenticationFailed() {
@@ -295,6 +298,27 @@ class Login : AppCompatActivity() {
                 binding.tietContrasenia.error = "La contraseña no es válida"
                 binding.tietContrasenia.requestFocus()
                 binding.tietContrasenia.setText("")
+
+                if(ingresoConHuella){
+                    //quitamos al usuario que estaba activo
+                    encryptedSharedPrefsEditor.putString("usuarioSp", "0")
+                    encryptedSharedPrefsEditor.putString("contraseniaSp", "0")
+                    encryptedSharedPrefsEditor.apply()
+
+                    usuarioSp = "0"
+
+                    ingresoConHuella = false
+
+                    AlertDialog.Builder(this)
+                        .setTitle("Aviso")
+                        .setMessage("La contraseña del usuario almacenado con huella activa ha cambiado. Favor de iniciar sesión con su correo electrónico y activar nuevamente el ingreso con huella.")
+                        .setPositiveButton("Aceptar"){ dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .create()
+                        .show()
+                }
+
 
             }
             "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL" -> {
